@@ -23,6 +23,13 @@ export type UserControllerGetAllChatsParams = {
   userId: number;
 };
 
+export interface AddUserToChatDto {
+  /** ChatId */
+  chatId: number;
+  /** userId */
+  userId: number;
+}
+
 export interface AddMessageRes {
   /** ID of the chat to which the message was sent */
   chatId: number;
@@ -765,6 +772,90 @@ export const useChatControllerAddMessage = <
   TContext
 > => {
   const mutationOptions = getChatControllerAddMessageMutationOptions(options);
+
+  return useMutation(mutationOptions);
+};
+
+/**
+ * @summary Add user to chat
+ */
+export const chatControllerAddUserToChat = (
+  addUserToChatDto: MaybeRef<AddUserToChatDto>,
+  options?: SecondParameter<typeof createInstance>,
+) => {
+  addUserToChatDto = unref(addUserToChatDto);
+
+  return createInstance<ChatDtoRes>(
+    {
+      url: `/chat/add-user`,
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      data: addUserToChatDto,
+    },
+    options,
+  );
+};
+
+export const getChatControllerAddUserToChatMutationOptions = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof chatControllerAddUserToChat>>,
+    TError,
+    { data: BodyType<AddUserToChatDto> },
+    TContext
+  >;
+  request?: SecondParameter<typeof createInstance>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof chatControllerAddUserToChat>>,
+  TError,
+  { data: BodyType<AddUserToChatDto> },
+  TContext
+> => {
+  const { mutation: mutationOptions, request: requestOptions } = options ?? {};
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof chatControllerAddUserToChat>>,
+    { data: BodyType<AddUserToChatDto> }
+  > = (props) => {
+    const { data } = props ?? {};
+
+    return chatControllerAddUserToChat(data, requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type ChatControllerAddUserToChatMutationResult = NonNullable<
+  Awaited<ReturnType<typeof chatControllerAddUserToChat>>
+>;
+export type ChatControllerAddUserToChatMutationBody =
+  BodyType<AddUserToChatDto>;
+export type ChatControllerAddUserToChatMutationError = ErrorType<unknown>;
+
+/**
+ * @summary Add user to chat
+ */
+export const useChatControllerAddUserToChat = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof chatControllerAddUserToChat>>,
+    TError,
+    { data: BodyType<AddUserToChatDto> },
+    TContext
+  >;
+  request?: SecondParameter<typeof createInstance>;
+}): UseMutationReturnType<
+  Awaited<ReturnType<typeof chatControllerAddUserToChat>>,
+  TError,
+  { data: BodyType<AddUserToChatDto> },
+  TContext
+> => {
+  const mutationOptions =
+    getChatControllerAddUserToChatMutationOptions(options);
 
   return useMutation(mutationOptions);
 };

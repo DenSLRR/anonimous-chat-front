@@ -131,6 +131,26 @@ paths:
       summary: Add a message to a chat
       tags:
         - chat
+  /chat/add-user:
+    post:
+      operationId: ChatController_addUserToChat
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/addUserToChatDto'
+      responses:
+        '200':
+          description: User added to chat successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ChatDtoRes'
+      summary: Add user to chat
+      tags:
+        - chat
 info:
   title: Chat api
   description: API for chat
@@ -361,3 +381,17 @@ components:
         - senderId
         - username
         - sentAt
+    addUserToChatDto:
+      type: object
+      properties:
+        chatId:
+          type: number
+          example: '1'
+          description: ChatId
+        userId:
+          type: number
+          example: '1'
+          description: userId
+      required:
+        - chatId
+        - userId
