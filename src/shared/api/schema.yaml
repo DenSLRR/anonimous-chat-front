@@ -1,0 +1,363 @@
+openapi: 3.0.0
+paths:
+  /auth/sign-in:
+    post:
+      operationId: AuthController_login
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginDto'
+      responses:
+        '201':
+          description: Login success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LoginDtoRes'
+      summary: Sign in
+      tags:
+        - authorization
+  /auth/sign-up:
+    post:
+      operationId: AuthController_register
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RegisterDto'
+      responses:
+        '201':
+          description: Registration success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RegistrationDtoRes'
+      summary: Sign in
+      tags:
+        - authorization
+  /auth/logout:
+    post:
+      operationId: AuthController_logout
+      parameters: []
+      responses:
+        '200':
+          description: ''
+      tags:
+        - authorization
+  /auth/access-token:
+    post:
+      operationId: AuthController_getNewTokens
+      parameters: []
+      responses:
+        '200':
+          description: ''
+      tags:
+        - authorization
+  /user/chats:
+    get:
+      operationId: UserController_getAllChats
+      parameters:
+        - name: userId
+          required: true
+          in: query
+          schema:
+            type: number
+      responses:
+        '201':
+          description: Get all chats success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ChatDtoRes'
+      summary: Sign in
+      tags:
+        - User
+  /user/{userId}:
+    get:
+      operationId: UserController_getUserById
+      parameters:
+        - name: userId
+          required: true
+          in: path
+          schema:
+            type: number
+      responses:
+        '200':
+          description: ''
+      tags:
+        - User
+  /chat/create:
+    post:
+      operationId: ChatController_create
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateChatDto'
+      responses:
+        '201':
+          description: Chat successfully created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ChatDtoRes'
+      summary: Create a new chat
+      tags:
+        - chat
+  /chat/message:
+    post:
+      operationId: ChatController_addMessage
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/addMessageDto'
+      responses:
+        '201':
+          description: Chat successfully created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AddMessageRes'
+      summary: Add a message to a chat
+      tags:
+        - chat
+info:
+  title: Chat api
+  description: API for chat
+  version: '1.0'
+  contact: {}
+tags: []
+servers: []
+components:
+  securitySchemes:
+    bearer:
+      scheme: bearer
+      bearerFormat: JWT
+      type: http
+  schemas:
+    LoginDto:
+      type: object
+      properties:
+        email:
+          type: string
+          example: eugen.soobchak@gmail.com
+          description: User email
+        password:
+          type: string
+          example: stro312ngpassword123
+          description: User password
+      required:
+        - email
+        - password
+    ChatDto:
+      type: object
+      properties: {}
+    LoginDtoRes:
+      type: object
+      properties:
+        id:
+          type: number
+          example: 1
+          description: Unique identifier of the user
+        username:
+          type: string
+          example: DenSLRR
+          description: Username of the user
+        email:
+          type: string
+          example: test@gmail.com
+          description: Email of the user
+        publicKey:
+          type: string
+          example: |
+            -----BEGIN PUBLIC KEY-----
+            MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AM...QAB
+            -----END PUBLIC KEY-----
+          description: Public key of the user for encryption purposes
+        chats:
+          description: List of chats the user is part of
+          type: array
+          items:
+            $ref: '#/components/schemas/ChatDto'
+        accessToken:
+          type: string
+          example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+          description: Access token for the user
+      required:
+        - id
+        - username
+        - email
+        - publicKey
+        - chats
+        - accessToken
+    RegisterDto:
+      type: object
+      properties:
+        username:
+          type: string
+          example: Username
+          description: User login
+        email:
+          type: string
+          example: eugen.soobchak@gmail.com
+          description: User email
+        password:
+          type: string
+          example: stro312ngpassword123
+          description: User password
+      required:
+        - username
+        - email
+        - password
+    userDto:
+      type: object
+      properties:
+        id:
+          type: number
+          example: 1
+          description: Unique identifier of the user
+        username:
+          type: string
+          example: DenSLRR
+          description: Username of the user
+        email:
+          type: string
+          example: test@gmail.com
+          description: Email of the user
+        publicKey:
+          type: string
+          example: |
+            -----BEGIN PUBLIC KEY-----
+            MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AM...QAB
+            -----END PUBLIC KEY-----
+          description: Public key of the user for encryption purposes
+      required:
+        - id
+        - username
+        - email
+        - publicKey
+    RegistrationDtoRes:
+      type: object
+      properties:
+        user:
+          example: user
+          description: user description
+          allOf:
+            - $ref: '#/components/schemas/userDto'
+        accessToken:
+          type: string
+          example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+          description: Access token for the user
+      required:
+        - user
+        - accessToken
+    ChatDtoRes:
+      type: object
+      properties:
+        id:
+          type: number
+          example: '4'
+          description: Chat Id
+        name:
+          type: string
+          example: new chat...
+          description: name
+        createdAt:
+          format: date-time
+          type: string
+          example: 22.3432.4234
+          description: Cteated at
+        encryptedChatKey:
+          type: string
+          example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+          description: Access token for the user
+      required:
+        - id
+        - name
+        - createdAt
+        - encryptedChatKey
+    CreateChatDto:
+      type: object
+      properties:
+        name:
+          type: string
+          example: Chat lohov
+          description: Name for chat
+        userIds:
+          example: '[12312312, 31231231, 31231231]'
+          description: ids users
+          type: array
+          items:
+            type: number
+        encryptedChatKey:
+          type: string
+          example: fsdfsdfsdfsdf
+          description: key
+      required:
+        - name
+        - userIds
+        - encryptedChatKey
+    addMessageDto:
+      type: object
+      properties:
+        chatId:
+          type: number
+          example: Chat ID
+          description: '3434523453'
+        senderId:
+          type: number
+          example: Sender Id
+          description: '4234234'
+        username:
+          type: string
+          example: Sender name
+          description: DenSLRR
+        encryptedContent:
+          type: string
+          example: encrypted - content
+          description: 34234sdjabjh3v24gv23jhb4kj3bk4hb23gv4j2b3423
+      required:
+        - chatId
+        - senderId
+        - username
+        - encryptedContent
+    AddMessageRes:
+      type: object
+      properties:
+        id:
+          type: number
+          description: ID of the added message
+        content:
+          type: string
+          description: Content of the message
+        chatId:
+          type: number
+          description: ID of the chat to which the message was sent
+        senderId:
+          type: number
+          description: ID of the sender
+        username:
+          type: string
+          example: Sender name
+          description: DenSLRR
+        sentAt:
+          format: date-time
+          type: string
+          description: Timestamp when the message was sent
+      required:
+        - id
+        - content
+        - chatId
+        - senderId
+        - username
+        - sentAt
